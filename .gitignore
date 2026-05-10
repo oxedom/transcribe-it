@@ -1,0 +1,4 @@
+.playwright-cli/
+*.yaml
+.DS_Store
+node_modules/
