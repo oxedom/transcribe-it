@@ -4,7 +4,9 @@
 
 # transcribe-it
 
-A tiny Chrome extension that adds a one-click **Copy transcript** button to every YouTube video — full transcript with timestamps, straight to your clipboard.
+A tiny Chrome extension that adds a one-click **Copy transcript** button to every YouTube video — full transcript with timestamps to your clipboard.
+
+Free and open-source, developed by [brinked.ai](https://brinked.ai).
 
 ## The problem
 
@@ -89,6 +91,36 @@ Works in any Chromium-based browser (Chrome, Edge, Brave, Arc). Firefox is not c
 - Only works on videos that actually have a transcript (manual or auto-generated captions).
 - If a video has no captions in any language, the button will say `No transcript available`.
 - Tested on the standard YouTube watch page; YouTube Music and Shorts are out of scope.
+
+## Settings
+
+Click the transcribe-it icon in the Chrome toolbar to open the settings popup:
+
+- **Copy only up to current time** — when on, copy stops at the video's current playback position. Default: off.
+- **Prepend prompt to clipboard** — when on, the editable prompt is placed at the top of the clipboard (followed by a blank line, then the transcript). Default: on.
+- **Prompt** — editable textarea. "Reset to default" restores the shipped prompt after a confirmation dialog.
+
+Settings auto-save and sync across your Chrome installs via `chrome.storage.sync`.
+
+## Development
+
+The popup uses precompiled Tailwind. After editing `src/input.css`, `popup.html`, or `popup.js`:
+
+```bash
+npm install      # one-time
+npm run build    # rebuild popup.css
+npm run watch    # rebuild on save during development
+```
+
+`popup.css` is committed so the extension loads from a fresh checkout without `npm install`.
+
+### Tests
+
+```bash
+npm install
+npx playwright install chromium
+npm test
+```
 
 ## Files
 
