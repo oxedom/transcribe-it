@@ -4,9 +4,11 @@
   "private": true,
   "scripts": {
     "build": "tailwindcss -i src/input.css -o popup.css --minify",
-    "watch": "tailwindcss -i src/input.css -o popup.css --watch"
+    "watch": "tailwindcss -i src/input.css -o popup.css --watch",
+    "test": "playwright test"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.0"
+    "tailwindcss": "^3.4.0",
+    "@playwright/test": "^1.45.0"
   }
 }

@@ -2,3 +2,6 @@
 *.yaml
 .DS_Store
 node_modules/
+tests/playwright/.user-data/
+playwright-report/
+test-results/
