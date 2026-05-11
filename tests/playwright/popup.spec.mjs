@@ -9,6 +9,9 @@ const EXT_PATH = path.resolve(__dirname, "..", "..");
 // Replace if it ever becomes unavailable.
 const TEST_VIDEO_URL = "https://www.youtube.com/watch?v=arj7oStGLkU";
 
+// Must stay in sync with SETTINGS_KEY in defaults.js
+const SETTINGS_KEY = "transcribeItSettings";
+
 async function launchWithExtension() {
   const userDataDir = path.resolve(__dirname, ".user-data");
   const context = await chromium.launchPersistentContext(userDataDir, {
@@ -28,9 +31,9 @@ async function launchWithExtension() {
 async function setSettings(context, extensionId, settings) {
   const popup = await context.newPage();
   await popup.goto(`chrome-extension://${extensionId}/popup.html`);
-  await popup.evaluate(async (s) => {
-    await chrome.storage.sync.set({ transcribeItSettings: s });
-  }, settings);
+  await popup.evaluate(async ({ key, value }) => {
+    await chrome.storage.sync.set({ [key]: value });
+  }, { key: SETTINGS_KEY, value: settings });
   await popup.close();
 }
 

@@ -68,7 +68,11 @@ async function init() {
     });
   }
 
-  els.promptText.addEventListener("input", save);
+  let saveTimer = null;
+  els.promptText.addEventListener("input", () => {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(save, 500);
+  });
 
   els.resetBtn.addEventListener("click", () => els.resetDialog.showModal());
   els.resetDialog.addEventListener("close", () => {
