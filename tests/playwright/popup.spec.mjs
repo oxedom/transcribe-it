@@ -10,7 +10,7 @@ const EXT_PATH = path.resolve(__dirname, "..", "..");
 const TEST_VIDEO_URL = "https://www.youtube.com/watch?v=arj7oStGLkU";
 
 // Must stay in sync with SETTINGS_KEY in defaults.js
-const SETTINGS_KEY = "transcribeItSettings";
+const SETTINGS_KEY = "transcribedSettings";
 
 async function launchWithExtension() {
   const userDataDir = path.resolve(__dirname, ".user-data");
@@ -41,7 +41,7 @@ async function readClipboard(page) {
   return page.evaluate(() => navigator.clipboard.readText());
 }
 
-test("transcript copy honours settings across all 4 combinations", async () => {
+test("transcript copy honours prependPrompt setting", async () => {
   const { context, extensionId } = await launchWithExtension();
   try {
     const page = await context.newPage();
@@ -52,18 +52,9 @@ test("transcript copy honours settings across all 4 combinations", async () => {
     await page.goto(TEST_VIDEO_URL);
     await page.locator("#yt-transcribe-copy-btn").waitFor({ timeout: 15000 });
 
-    // Seek to a known time used by the timestamp-on cases.
-    await page.evaluate(() => {
-      const v = document.querySelector("video");
-      v.pause();
-      v.currentTime = 30;
-    });
-
     const combos = [
-      { copyUpToCurrentTime: false, prependPrompt: false, promptText: "TEST_PROMPT" },
-      { copyUpToCurrentTime: false, prependPrompt: true, promptText: "TEST_PROMPT" },
-      { copyUpToCurrentTime: true, prependPrompt: false, promptText: "TEST_PROMPT" },
-      { copyUpToCurrentTime: true, prependPrompt: true, promptText: "TEST_PROMPT" },
+      { prependPrompt: false, promptText: "TEST_PROMPT" },
+      { prependPrompt: true, promptText: "TEST_PROMPT" },
     ];
 
     for (const s of combos) {
@@ -87,18 +78,6 @@ test("transcript copy honours settings across all 4 combinations", async () => {
       // First content line after any prompt should be a "[timestamp] text" line.
       const body = s.prependPrompt ? text.slice("TEST_PROMPT\n\n".length) : text;
       expect(body).toMatch(/^\[\d+:\d{2}(?::\d{2})?\] /m);
-
-      if (s.copyUpToCurrentTime) {
-        // No segment timestamp in the body should exceed 30 seconds.
-        const lines = body.split("\n").filter(Boolean);
-        for (const line of lines) {
-          const m = line.match(/^\[(\d+(?::\d+)+)\]/);
-          if (!m) continue;
-          const parts = m[1].split(":").map(Number);
-          const secs = parts.reduce((acc, n) => acc * 60 + n, 0);
-          expect(secs).toBeLessThanOrEqual(30);
-        }
-      }
     }
   } finally {
     await context.close();

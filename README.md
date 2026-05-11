@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="icon.svg" alt="transcribe-it" width="120" height="120" />
+  <img src="banner.svg" alt="transcribed" height="120" />
 </p>
-
-# transcribe-it
 
 A tiny Chrome extension that adds a one-click **Copy transcript** button to every YouTube video — full transcript with timestamps to your clipboard.
 
-Free and open-source, developed by [brinked.ai](https://brinked.ai).
+<p align="center">
+  Made with ❤️ by <a href="https://brinked.ai">brinked.ai</a>
+</p>
 
 ## The problem
 
@@ -21,7 +21,7 @@ That's four steps and a hand-selection every time you want to feed a video into 
 
 ## The fix
 
-transcribe-it injects a teal **Copy transcript** button right next to Like / Share. One click and the entire transcript — timestamps included — is on your clipboard.
+transcribed injects a teal **Copy transcript** button right next to Like / Share. One click and the entire transcript — timestamps included — is on your clipboard.
 
 ```
 [0:00] Never gonna give you up
@@ -44,17 +44,17 @@ It also listens for YouTube's `yt-navigate-finish` SPA event so the button reapp
 
 ## Install 🚀
 
-transcribe-it isn't on the Chrome Web Store yet, so you'll load it as an unpacked extension. Takes about a minute.
+transcribed isn't on the Chrome Web Store yet, so you'll load it as an unpacked extension. Takes about a minute.
 
 ### 1. Get the code
 
 Either clone the repo:
 
 ```bash
-git clone https://github.com/oxedom/transcribe-it.git
+git clone https://github.com/oxedom/transcribed.git
 ```
 
-…or download it as a ZIP from GitHub (**Code → Download ZIP**) and unzip it somewhere you'll remember (e.g. `~/Documents/transcribe-it`).
+…or download it as a ZIP from GitHub (**Code → Download ZIP**) and unzip it somewhere you'll remember (e.g. `~/Documents/transcribed`).
 
 ### 2. Open the extensions page
 
@@ -73,8 +73,8 @@ Flip the **Developer mode** toggle in the top-right corner of the page. You'll s
 ### 4. Load the extension
 
 1. Click **Load unpacked**.
-2. In the file picker, select the `transcribe-it` folder (the one containing `manifest.json` — not its parent).
-3. The extension card should appear with the name **transcribe-it** and status **On**.
+2. In the file picker, select the `transcribed` folder (the one containing `manifest.json` — not its parent).
+3. The extension card should appear with the name **transcribed** and status **On**.
 
 ### 5. Try it out
 
@@ -82,7 +82,7 @@ Open or refresh any YouTube watch page (e.g. `youtube.com/watch?v=...`). The tea
 
 ### Updating later
 
-When you `git pull` (or download a new ZIP), go back to `chrome://extensions` and click the circular **Reload** icon on the transcribe-it card. No need to remove and reinstall.
+When you `git pull` (or download a new ZIP), go back to `chrome://extensions` and click the circular **Reload** icon on the transcribed card. No need to remove and reinstall.
 
 Works in any Chromium-based browser (Chrome, Edge, Brave, Arc). Firefox is not currently supported.
 
@@ -94,7 +94,7 @@ Works in any Chromium-based browser (Chrome, Edge, Brave, Arc). Firefox is not c
 
 ## Settings
 
-Click the transcribe-it icon in the Chrome toolbar to open the settings popup:
+Click the transcribed icon in the Chrome toolbar to open the settings popup:
 
 - **Copy only up to current time** — when on, copy stops at the video's current playback position. Default: off.
 - **Prepend prompt to clipboard** — when on, the editable prompt is placed at the top of the clipboard (followed by a blank line, then the transcript). Default: on.

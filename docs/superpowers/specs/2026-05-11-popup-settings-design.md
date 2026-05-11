@@ -1,11 +1,11 @@
-# Popup Settings — Design Spec
+  # Popup Settings — Design Spec
 
 **Date:** 2026-05-11
 **Status:** Approved, pending implementation plan
 
 ## Summary
 
-Add a toolbar popup to the transcribe-it Chrome extension that lets users configure two behaviors:
+Add a toolbar popup to the transcribed Chrome extension that lets users configure two behaviors:
 
 1. **Copy up to current playback time** — when on, only segments at or before the video's current `currentTime` are copied.
 2. **Prepend a prompt** — when on, a user-editable prompt is prepended to the clipboard payload (followed by a blank line, then the transcript).
@@ -49,7 +49,7 @@ Settings persist via `chrome.storage.sync`. The popup is styled with precompiled
 
 ## Settings Schema
 
-Stored under a single key `transcribeItSettings` in `chrome.storage.sync`:
+Stored under a single key `transcribedSettings` in `chrome.storage.sync`:
 
 ```js
 {
@@ -92,7 +92,7 @@ Target width ~360px. Single column. Styled with Tailwind classes mapped to the s
 
 **Sections, top to bottom:**
 
-1. **Header:** "transcribe-it" title, small subtitle "Settings".
+1. **Header:** "transcribed" title, small subtitle "Settings".
 2. **Toggle row:** "Copy only up to current time" — switch + one-line help text "Stops at the video's current playback position."
 3. **Toggle row:** "Prepend prompt to clipboard" — switch.
 4. **Prompt block:**
@@ -115,7 +115,7 @@ Implemented as a plain `<dialog>` element with shadcn-token styling. Cancel keep
 
 ## Content Script Changes
 
-At click time (not page load), `copyTranscript` reads settings via `chrome.storage.sync.get('transcribeItSettings')`, falling back to `DEFAULT_SETTINGS` if missing.
+At click time (not page load), `copyTranscript` reads settings via `chrome.storage.sync.get('transcribedSettings')`, falling back to `DEFAULT_SETTINGS` if missing.
 
 ### Timestamp filter
 
@@ -160,7 +160,7 @@ The timestamp shown is the timestamp string of the last included segment (e.g. `
 ```json
 {
   "manifest_version": 3,
-  "name": "transcribe-it",
+  "name": "transcribed",
   "version": "1.1.0",
   "description": "Adds a one-click button to copy a YouTube video's transcript with timestamps.",
   "icons": { ... },
@@ -185,7 +185,7 @@ Two additions: `storage` permission and `action.default_popup`. `defaults.js` is
 
 ```json
 {
-  "name": "transcribe-it",
+  "name": "transcribed",
   "version": "1.1.0",
   "private": true,
   "scripts": {

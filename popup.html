@@ -2,38 +2,29 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>transcribe-it settings</title>
+    <title>transcribed settings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:wght@600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="popup.css" />
     <style>
       /* Popup is fixed-width; the body provides the visible chrome. */
       html, body { width: 360px; }
-      body { margin: 0; }
+      body { margin: 0; font-family: "Inter", system-ui, sans-serif; }
+      .brand-title { font-family: "Newsreader", serif; }
     </style>
   </head>
   <body class="bg-background text-foreground">
-    <main class="p-4 space-y-4">
-      <header>
-        <h1 class="text-base font-semibold">transcribe-it</h1>
-        <p class="text-xs text-muted-foreground">Settings</p>
+    <main class="px-4 pt-6 pb-4 space-y-4">
+      <header class="flex items-center gap-2.5">
+        <img src="icon.svg" alt="" width="36" height="36" class="shrink-0" />
+        <h1 class="brand-title text-4xl font-semibold leading-none">transcribed</h1>
       </header>
 
       <section class="space-y-3">
         <div class="flex items-start justify-between gap-3">
-          <label for="toggle-up-to" class="text-sm font-medium">Copy only up to current time</label>
-          <button
-            id="toggle-up-to"
-            type="button"
-            role="switch"
-            aria-checked="false"
-            class="switch-root"
-            data-state="unchecked"
-          >
-            <span class="switch-thumb"></span>
-          </button>
-        </div>
-
-        <div class="flex items-start justify-between gap-3">
-          <label for="toggle-prepend" class="text-sm font-medium">Prepend prompt to clipboard</label>
+          <label for="toggle-prepend" class="text-sm font-medium">Add prompt before transcript</label>
           <button
             id="toggle-prepend"
             type="button"
@@ -60,7 +51,7 @@
         </div>
         <textarea
           id="prompt-text"
-          rows="10"
+          rows="7"
           class="w-full rounded-md border border-input bg-card text-card-foreground p-2 text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-ring resize-y"
           spellcheck="false"
         ></textarea>
@@ -75,6 +66,16 @@
       >
         Save
       </button>
+
+      <p class="text-xs text-center text-muted-foreground inline-flex items-center justify-center gap-1 w-full">
+        Made with <span aria-label="love" role="img">❤️</span> by
+        <a
+          href="https://brinked.ai"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:underline underline-offset-2"
+        ><span style="color:hsl(var(--primary))">brinked</span><span style="color:hsl(var(--accent))">.ai</span></a>
+      </p>
     </main>
 
     <dialog
@@ -82,9 +83,9 @@
       class="rounded-lg border border-border bg-popover text-popover-foreground p-0 backdrop:bg-black/40 max-w-xs"
     >
       <form method="dialog" class="p-4 space-y-3">
-        <h2 class="text-sm font-semibold">Reset prompt to default?</h2>
+        <h2 class="text-sm font-semibold">Restore the default prompt?</h2>
         <p class="text-xs text-muted-foreground">
-          This will replace the current prompt text. This action cannot be undone.
+          Your current prompt will be replaced. You can always edit it again.
         </p>
         <div class="flex justify-end gap-2">
           <button

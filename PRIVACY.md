@@ -2,11 +2,11 @@
 
 **Effective date:** 2026-05-11
 
-transcribe-it is a Chrome extension that adds a one-click button to copy a YouTube video's transcript with timestamps.
+transcribed is a Chrome extension that adds a one-click button to copy a YouTube video's transcript with timestamps.
 
 ## Data collection
 
-transcribe-it does not collect, store, transmit, or share any personal information or user data.
+transcribed does not collect, store, transmit, or share any personal information or user data.
 
 - No analytics, tracking, or telemetry.
 - No data is sent to any remote server.
@@ -32,7 +32,7 @@ The extension does not run on any other site.
 
 ## Third parties
 
-transcribe-it does not use any third-party services, SDKs, or remote code.
+transcribed does not use any third-party services, SDKs, or remote code.
 
 ## Changes
 

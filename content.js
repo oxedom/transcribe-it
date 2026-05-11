@@ -1,6 +1,6 @@
 (() => {
   const BTN_ID = "yt-transcribe-copy-btn";
-  const { DEFAULT_SETTINGS, SETTINGS_KEY } = globalThis.TranscribeItDefaults;
+  const { DEFAULT_SETTINGS, SETTINGS_KEY } = globalThis.TranscribedDefaults;
 
   const STYLE = `
     #${BTN_ID} {
@@ -68,14 +68,22 @@
     return null;
   }
 
+  const PANEL_SELECTOR =
+    'ytd-engagement-panel-section-list-renderer[target-id="PAmodern_transcript_view"], ' +
+    'ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-searchable-transcript"]';
+
   function getTranscriptPanel() {
-    return document.querySelector(
-      'ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-searchable-transcript"]'
+    const panels = document.querySelectorAll(PANEL_SELECTOR);
+    const expanded = Array.from(panels).find(
+      p => p.getAttribute("visibility") === "ENGAGEMENT_PANEL_VISIBILITY_EXPANDED"
     );
+    return expanded || panels[0] || null;
   }
 
   function getSegments() {
-    return document.querySelectorAll("ytd-transcript-segment-renderer");
+    return document.querySelectorAll(
+      "transcript-segment-view-model, ytd-transcript-segment-renderer"
+    );
   }
 
   async function ensureTranscriptOpen() {
@@ -108,31 +116,15 @@
     return panel;
   }
 
-  function parseTs(ts) {
-    if (!ts) return null;
-    const parts = ts.split(":").map(Number);
-    if (parts.some(isNaN)) return null;
-    return parts.reduce((acc, n) => acc * 60 + n, 0);
-  }
-
   function readSegment(seg) {
+    if (seg.tagName === "TRANSCRIPT-SEGMENT-VIEW-MODEL") {
+      const ts = seg.querySelector(".ytwTranscriptSegmentViewModelTimestamp")?.textContent?.trim() || "";
+      const text = seg.querySelector('span[role="text"]')?.textContent?.trim() || "";
+      return { ts, text };
+    }
     const ts = seg.querySelector(".segment-timestamp")?.textContent?.trim() || "";
     const text = seg.querySelector(".segment-text")?.textContent?.trim() || "";
     return { ts, text };
-  }
-
-  function filterSegmentsByTime(segments, currentTime) {
-    if (!Number.isFinite(currentTime) || currentTime <= 0) {
-      return Array.from(segments).map(readSegment).filter(s => s.text);
-    }
-    const out = [];
-    for (const seg of segments) {
-      const parsed = readSegment(seg);
-      if (!parsed.text) continue;
-      const tSec = parseTs(parsed.ts);
-      if (tSec === null || tSec <= currentTime) out.push(parsed);
-    }
-    return out;
   }
 
   function formatTranscript(items) {
@@ -168,9 +160,7 @@
       }, { timeout: 10000 });
       if (!segs) throw new Error("No transcript available");
 
-      const video = document.querySelector("video");
-      const currentTime = settings.copyUpToCurrentTime && video ? video.currentTime : 0;
-      const items = filterSegmentsByTime(segs, currentTime);
+      const items = Array.from(segs).map(readSegment).filter(s => s.text);
       if (!items.length) throw new Error("Transcript is empty");
 
       const body = formatTranscript(items);
@@ -183,7 +173,7 @@
 
       setLabel(`${ICON_SVG}<span>Copied</span>`);
     } catch (e) {
-      console.error("[transcribe-it]", e);
+      console.error("[transcribed]", e);
       setLabel(`${ICON_SVG}<span>${e.message || "Failed"}</span>`);
     } finally {
       setTimeout(() => {

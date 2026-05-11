@@ -1,10 +1,9 @@
 // popup.js — runs in the extension popup. defaults.js loaded before this script.
 
 (() => {
-  const { DEFAULT_SETTINGS, SETTINGS_KEY } = globalThis.TranscribeItDefaults;
+  const { DEFAULT_SETTINGS, SETTINGS_KEY } = globalThis.TranscribedDefaults;
 
   const els = {
-    toggleUpTo: document.getElementById("toggle-up-to"),
     togglePrepend: document.getElementById("toggle-prepend"),
     promptText: document.getElementById("prompt-text"),
     resetBtn: document.getElementById("reset-btn"),
@@ -30,14 +29,12 @@
   }
 
   function render(settings) {
-    setSwitch(els.toggleUpTo, settings.copyUpToCurrentTime);
     setSwitch(els.togglePrepend, settings.prependPrompt);
     els.promptText.value = settings.promptText;
   }
 
   function currentSettings() {
     return {
-      copyUpToCurrentTime: readSwitch(els.toggleUpTo),
       prependPrompt: readSwitch(els.togglePrepend),
       promptText: els.promptText.value,
     };
@@ -45,7 +42,6 @@
 
   function settingsEqual(a, b) {
     return (
-      a.copyUpToCurrentTime === b.copyUpToCurrentTime &&
       a.prependPrompt === b.prependPrompt &&
       a.promptText === b.promptText
     );
@@ -81,12 +77,10 @@
     lastSaved = settings;
     refreshSaveButton();
 
-    for (const sw of [els.toggleUpTo, els.togglePrepend]) {
-      sw.addEventListener("click", () => {
-        setSwitch(sw, !readSwitch(sw));
-        refreshSaveButton();
-      });
-    }
+    els.togglePrepend.addEventListener("click", () => {
+      setSwitch(els.togglePrepend, !readSwitch(els.togglePrepend));
+      refreshSaveButton();
+    });
 
     els.promptText.addEventListener("input", refreshSaveButton);
 

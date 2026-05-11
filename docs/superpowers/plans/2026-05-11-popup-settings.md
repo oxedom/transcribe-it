@@ -72,17 +72,17 @@ const DEFAULT_SETTINGS = {
   promptText: DEFAULT_PROMPT,
 };
 
-const SETTINGS_KEY = "transcribeItSettings";
+const SETTINGS_KEY = "transcribedSettings";
 
 // Expose on globalThis so both content-script and popup contexts can read them
 // without an ES module loader.
-globalThis.TranscribeItDefaults = { DEFAULT_PROMPT, DEFAULT_SETTINGS, SETTINGS_KEY };
+globalThis.TranscribedDefaults = { DEFAULT_PROMPT, DEFAULT_SETTINGS, SETTINGS_KEY };
 ```
 
 - [ ] **Step 2: Manually verify the file loads in a browser**
 
 Run: open `defaults.js` in any browser tab via `file://` or paste contents into DevTools console.
-Expected: `TranscribeItDefaults.DEFAULT_SETTINGS.prependPrompt === true` evaluates to `true`.
+Expected: `TranscribedDefaults.DEFAULT_SETTINGS.prependPrompt === true` evaluates to `true`.
 
 - [ ] **Step 3: Commit**
 
@@ -111,7 +111,7 @@ node_modules/
 
 ```json
 {
-  "name": "transcribe-it",
+  "name": "transcribed",
   "version": "1.1.0",
   "private": true,
   "scripts": {
@@ -293,7 +293,7 @@ git commit -m "build: add Tailwind pipeline with shadcn design tokens"
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>transcribe-it settings</title>
+    <title>transcribed settings</title>
     <link rel="stylesheet" href="popup.css" />
     <style>
       /* Popup is fixed-width; the body provides the visible chrome. */
@@ -304,7 +304,7 @@ git commit -m "build: add Tailwind pipeline with shadcn design tokens"
   <body class="bg-background text-foreground">
     <main class="p-4 space-y-4">
       <header>
-        <h1 class="text-base font-semibold">transcribe-it</h1>
+        <h1 class="text-base font-semibold">transcribed</h1>
         <p class="text-xs text-muted-foreground">Settings</p>
       </header>
 
@@ -425,7 +425,7 @@ git commit -m "feat: add settings popup markup"
 ```js
 // popup.js — runs in the extension popup. defaults.js loaded before this script.
 
-const { DEFAULT_SETTINGS, SETTINGS_KEY } = globalThis.TranscribeItDefaults;
+const { DEFAULT_SETTINGS, SETTINGS_KEY } = globalThis.TranscribedDefaults;
 
 const els = {
   toggleUpTo: document.getElementById("toggle-up-to"),
@@ -526,7 +526,7 @@ git commit -m "feat: implement popup settings logic and reset dialog"
 ```json
 {
   "manifest_version": 3,
-  "name": "transcribe-it",
+  "name": "transcribed",
   "version": "1.1.0",
   "description": "Adds a one-click button to copy a YouTube video's transcript with timestamps.",
   "icons": {
@@ -581,7 +581,7 @@ Replace the entire contents of `content.js` with:
 ```js
 (() => {
   const BTN_ID = "yt-transcribe-copy-btn";
-  const { DEFAULT_SETTINGS, SETTINGS_KEY } = globalThis.TranscribeItDefaults;
+  const { DEFAULT_SETTINGS, SETTINGS_KEY } = globalThis.TranscribedDefaults;
 
   const STYLE = `
     #${BTN_ID} {
@@ -762,7 +762,7 @@ Replace the entire contents of `content.js` with:
       const lastTs = settings.copyUpToCurrentTime ? items[items.length - 1].ts : "";
       setLabel(`${ICON_SVG}<span>${buildSuccessLabel(items.length, lastTs, settings)}</span>`);
     } catch (e) {
-      console.error("[transcribe-it]", e);
+      console.error("[transcribed]", e);
       setLabel(`${ICON_SVG}<span>${e.message || "Failed"}</span>`);
     } finally {
       setTimeout(() => {
@@ -836,7 +836,7 @@ git commit -m "feat: apply popup settings to transcript copy"
 
 ```json
 {
-  "name": "transcribe-it",
+  "name": "transcribed",
   "version": "1.1.0",
   "private": true,
   "scripts": {
@@ -909,7 +909,7 @@ async function setSettings(context, extensionId, settings) {
   const popup = await context.newPage();
   await popup.goto(`chrome-extension://${extensionId}/popup.html`);
   await popup.evaluate(async (s) => {
-    await chrome.storage.sync.set({ transcribeItSettings: s });
+    await chrome.storage.sync.set({ transcribedSettings: s });
   }, settings);
   await popup.close();
 }
@@ -1014,7 +1014,7 @@ Edit the README so that, after the existing usage description, it includes:
 ```markdown
 ## Settings
 
-Click the transcribe-it icon in the Chrome toolbar to open the settings popup:
+Click the transcribed icon in the Chrome toolbar to open the settings popup:
 
 - **Copy only up to current time** — when on, copy stops at the video's current playback position. Default: off.
 - **Prepend prompt to clipboard** — when on, the editable prompt is placed at the top of the clipboard (followed by a blank line, then the transcript). Default: on.
@@ -1063,7 +1063,7 @@ Expected: extension loads, no errors, toolbar icon visible.
 
 - [ ] **Step 2: Open the popup**
 
-Click the transcribe-it toolbar icon.
+Click the transcribed toolbar icon.
 Expected: popup opens. Width ~360px. "Copy only up to current time" is OFF, "Prepend prompt to clipboard" is ON, textarea is populated with the default prompt.
 
 - [ ] **Step 3: Verify auto-save**

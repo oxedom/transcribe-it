@@ -25,13 +25,12 @@ Content:
     Output the HTML as a file I can save, not inline in chat`;
 
 const DEFAULT_SETTINGS = {
-  copyUpToCurrentTime: false,
   prependPrompt: true,
   promptText: DEFAULT_PROMPT,
 };
 
-const SETTINGS_KEY = "transcribeItSettings";
+const SETTINGS_KEY = "transcribedSettings";
 
 // Expose on globalThis so both content-script and popup contexts can read them
 // without an ES module loader.
-globalThis.TranscribeItDefaults = { DEFAULT_PROMPT, DEFAULT_SETTINGS, SETTINGS_KEY };
+globalThis.TranscribedDefaults = { DEFAULT_PROMPT, DEFAULT_SETTINGS, SETTINGS_KEY };
