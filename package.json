@@ -1,0 +1,12 @@
+{
+  "name": "transcribe-it",
+  "version": "1.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tailwindcss -i src/input.css -o popup.css --minify",
+    "watch": "tailwindcss -i src/input.css -o popup.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}
