@@ -1,14 +1,15 @@
 (() => {
   const BTN_ID = "yt-transcribe-copy-btn";
+  const { DEFAULT_SETTINGS, SETTINGS_KEY } = globalThis.TranscribeItDefaults;
 
   const STYLE = `
     #${BTN_ID} {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: #C2761F;
+      background: #0F4D49;
       color: #ffffff;
-      border: 1px solid #0F4D49;
+      border: none;
       border-radius: 18px;
       padding: 0 14px;
       height: 36px;
@@ -17,19 +18,18 @@
       font-weight: 500;
       cursor: pointer;
       margin-left: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
-      transition: background 0.15s ease, box-shadow 0.15s ease;
+      transition: background 0.15s ease;
       white-space: nowrap;
     }
-    #${BTN_ID}:hover { background: #D88A2E; }
-    #${BTN_ID}:active { background: #A05F14; }
+    #${BTN_ID}:hover { background: #14625C; }
+    #${BTN_ID}:active { background: #0A3835; }
     #${BTN_ID}[disabled] { opacity: 0.7; cursor: default; }
     #${BTN_ID} svg { width: 20px; height: 20px; display: block; }
   `;
 
   const ICON_SVG = `
     <svg viewBox="0 0 100 100" aria-hidden="true">
-      <g stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <g stroke="#C2761F" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
         <path d="M 19 57 L 19 21 A 8 8 0 0 1 27 13 L 56 13"/>
         <rect x="31" y="22" width="50" height="70" rx="8"/>
       </g>
@@ -80,7 +80,6 @@
     if (descBtn) {
       descBtn.click();
     } else {
-      // Try expanding description first ("...more"), then look again
       const expand = document.querySelector("tp-yt-paper-button#expand");
       if (expand) {
         expand.click();
@@ -99,15 +98,53 @@
     return panel;
   }
 
-  function formatTranscript(segments) {
-    const lines = [];
-    for (const seg of segments) {
-      const ts = seg.querySelector(".segment-timestamp")?.textContent?.trim() || "";
-      const text = seg.querySelector(".segment-text")?.textContent?.trim() || "";
-      if (!text) continue;
-      lines.push(`[${ts}] ${text}`);
+  function parseTs(ts) {
+    if (!ts) return null;
+    const parts = ts.split(":").map(Number);
+    if (parts.some(isNaN)) return null;
+    return parts.reduce((acc, n) => acc * 60 + n, 0);
+  }
+
+  function readSegment(seg) {
+    const ts = seg.querySelector(".segment-timestamp")?.textContent?.trim() || "";
+    const text = seg.querySelector(".segment-text")?.textContent?.trim() || "";
+    return { ts, text };
+  }
+
+  function filterSegmentsByTime(segments, currentTime) {
+    if (!Number.isFinite(currentTime) || currentTime <= 0) {
+      return Array.from(segments).map(readSegment).filter(s => s.text);
     }
-    return lines.join("\n");
+    const out = [];
+    for (const seg of segments) {
+      const parsed = readSegment(seg);
+      if (!parsed.text) continue;
+      const tSec = parseTs(parsed.ts);
+      if (tSec === null || tSec <= currentTime) out.push(parsed);
+    }
+    return out;
+  }
+
+  function formatTranscript(items) {
+    return items
+      .map(({ ts, text }) => (ts ? `[${ts}] ${text}` : text))
+      .join("\n");
+  }
+
+  async function loadSettings() {
+    try {
+      const stored = await chrome.storage.sync.get(SETTINGS_KEY);
+      return { ...DEFAULT_SETTINGS, ...(stored[SETTINGS_KEY] || {}) };
+    } catch {
+      return DEFAULT_SETTINGS;
+    }
+  }
+
+  function buildSuccessLabel(count, lastTs, settings) {
+    const parts = [`Copied ${count} lines`];
+    if (settings.prependPrompt && settings.promptText.trim()) parts.push("+ prompt");
+    if (settings.copyUpToCurrentTime && lastTs) parts.push(`(up to ${lastTs})`);
+    return parts.join(" ");
   }
 
   async function copyTranscript(btn) {
@@ -117,6 +154,8 @@
     setLabel(`${ICON_SVG}<span>Loading…</span>`);
 
     try {
+      const settings = await loadSettings();
+
       const panel = await ensureTranscriptOpen();
       if (!panel) throw new Error("No transcript available for this video.");
 
@@ -124,14 +163,23 @@
         const s = getSegments();
         return s.length ? s : null;
       }, { timeout: 10000 });
-
       if (!segs) throw new Error("No transcript available for this video.");
 
-      const text = formatTranscript(segs);
-      if (!text) throw new Error("Transcript is empty.");
+      const video = document.querySelector("video");
+      const currentTime = settings.copyUpToCurrentTime && video ? video.currentTime : 0;
+      const items = filterSegmentsByTime(segs, currentTime);
+      if (!items.length) throw new Error("Transcript is empty.");
 
-      await navigator.clipboard.writeText(text);
-      setLabel(`${ICON_SVG}<span>Copied ${segs.length} lines</span>`);
+      const body = formatTranscript(items);
+      const trimmedPrompt = settings.promptText.trim();
+      const out = settings.prependPrompt && trimmedPrompt
+        ? `${trimmedPrompt}\n\n${body}`
+        : body;
+
+      await navigator.clipboard.writeText(out);
+
+      const lastTs = settings.copyUpToCurrentTime ? items[items.length - 1].ts : "";
+      setLabel(`${ICON_SVG}<span>${buildSuccessLabel(items.length, lastTs, settings)}</span>`);
     } catch (e) {
       console.error("[transcribe-it]", e);
       setLabel(`${ICON_SVG}<span>${e.message || "Failed"}</span>`);
@@ -159,14 +207,11 @@
 
   function insertButton() {
     if (document.getElementById(BTN_ID)) return true;
-
-    // Prefer the like/share action row
     const target =
       document.querySelector("ytd-watch-metadata #top-level-buttons-computed") ||
       document.querySelector("#actions #top-level-buttons-computed") ||
       document.querySelector("ytd-watch-metadata #actions");
     if (!target) return false;
-
     target.appendChild(buildButton());
     return true;
   }
@@ -181,7 +226,6 @@
     insertButton();
   }
 
-  // Run on initial load and react to YouTube's SPA navigation
   tick();
   const obs = new MutationObserver(() => tick());
   obs.observe(document.documentElement, { childList: true, subtree: true });
