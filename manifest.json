@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "youTranscribe",
+  "name": "transcribe-it",
   "version": "1.0.0",
   "description": "Adds a one-click button to copy a YouTube video's transcript with timestamps.",
   "content_scripts": [

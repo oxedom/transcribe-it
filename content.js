@@ -129,7 +129,7 @@
       await navigator.clipboard.writeText(text);
       setLabel(`${ICON_SVG}<span>Copied ${segs.length} lines</span>`);
     } catch (e) {
-      console.error("[youTranscribe]", e);
+      console.error("[transcribe-it]", e);
       setLabel(`${ICON_SVG}<span>${e.message || "Failed"}</span>`);
     } finally {
       setTimeout(() => {

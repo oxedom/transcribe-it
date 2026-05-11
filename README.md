@@ -1,4 +1,4 @@
-# YouTranscribe 📋
+# transcribe-it 📋
 
 A tiny Chrome extension that adds a one-click **Copy transcript** button to every YouTube video — full transcript with timestamps, straight to your clipboard.
 
@@ -15,7 +15,7 @@ That's four steps and a hand-selection every time you want to feed a video into 
 
 ## The fix
 
-YouTranscribe injects a purple **Copy transcript** button right next to Like / Share. One click and the entire transcript — timestamps included — is on your clipboard.
+transcribe-it injects a purple **Copy transcript** button right next to Like / Share. One click and the entire transcript — timestamps included — is on your clipboard.
 
 ```
 [0:00] Never gonna give you up
