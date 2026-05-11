@@ -1,4 +1,8 @@
-# transcribe-it 📋
+<p align="center">
+  <img src="icon.svg" alt="transcribe-it" width="120" height="120" />
+</p>
+
+# transcribe-it
 
 A tiny Chrome extension that adds a one-click **Copy transcript** button to every YouTube video — full transcript with timestamps, straight to your clipboard.
 
@@ -15,7 +19,7 @@ That's four steps and a hand-selection every time you want to feed a video into 
 
 ## The fix
 
-transcribe-it injects a purple **Copy transcript** button right next to Like / Share. One click and the entire transcript — timestamps included — is on your clipboard.
+transcribe-it injects a teal **Copy transcript** button right next to Like / Share. One click and the entire transcript — timestamps included — is on your clipboard.
 
 ```
 [0:00] Never gonna give you up
@@ -38,12 +42,47 @@ It also listens for YouTube's `yt-navigate-finish` SPA event so the button reapp
 
 ## Install 🚀
 
-1. Clone or download this repo.
-2. Open `chrome://extensions` and turn on **Developer mode** (top-right).
-3. Click **Load unpacked** and select this folder.
-4. Refresh any open YouTube tab — the purple button shows up next to Like / Share.
+transcribe-it isn't on the Chrome Web Store yet, so you'll load it as an unpacked extension. Takes about a minute.
 
-Works in any Chromium-based browser (Chrome, Edge, Brave, Arc).
+### 1. Get the code
+
+Either clone the repo:
+
+```bash
+git clone https://github.com/oxedom/transcribe-it.git
+```
+
+…or download it as a ZIP from GitHub (**Code → Download ZIP**) and unzip it somewhere you'll remember (e.g. `~/Documents/transcribe-it`).
+
+### 2. Open the extensions page
+
+In your browser, paste this into the address bar and press Enter:
+
+```
+chrome://extensions
+```
+
+(In Edge use `edge://extensions`, in Brave `brave://extensions`, in Arc `arc://extensions`.)
+
+### 3. Turn on Developer mode
+
+Flip the **Developer mode** toggle in the top-right corner of the page. You'll see three new buttons appear: **Load unpacked**, **Pack extension**, **Update**.
+
+### 4. Load the extension
+
+1. Click **Load unpacked**.
+2. In the file picker, select the `transcribe-it` folder (the one containing `manifest.json` — not its parent).
+3. The extension card should appear with the name **transcribe-it** and status **On**.
+
+### 5. Try it out
+
+Open or refresh any YouTube watch page (e.g. `youtube.com/watch?v=...`). The teal **Copy transcript** button shows up next to Like / Share. Click it, then paste anywhere.
+
+### Updating later
+
+When you `git pull` (or download a new ZIP), go back to `chrome://extensions` and click the circular **Reload** icon on the transcribe-it card. No need to remove and reinstall.
+
+Works in any Chromium-based browser (Chrome, Edge, Brave, Arc). Firefox is not currently supported.
 
 ## Limitations
 
@@ -55,5 +94,7 @@ Works in any Chromium-based browser (Chrome, Edge, Brave, Arc).
 
 - `manifest.json` — Manifest V3 config, single `clipboardWrite` permission.
 - `content.js` — the entire extension, ~190 lines, no build step, no dependencies.
+- `icon.svg` — the extension icon (teal/gold brand mark).
+- `icons/icon-{16,32,48,128}.png` — PNG exports referenced by `manifest.json` (Chromium requires PNG for `icons`).
 
 That's it. Keep it simple. ✨

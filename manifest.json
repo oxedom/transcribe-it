@@ -3,6 +3,12 @@
   "name": "transcribe-it",
   "version": "1.0.0",
   "description": "Adds a one-click button to copy a YouTube video's transcript with timestamps.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
   "content_scripts": [
     {
       "matches": ["https://www.youtube.com/*"],
@@ -10,5 +16,6 @@
       "run_at": "document_idle"
     }
   ],
-  "permissions": ["clipboardWrite"]
+  "permissions": ["clipboardWrite"],
+  "host_permissions": ["https://www.youtube.com/*"]
 }

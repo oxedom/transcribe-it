@@ -5,10 +5,10 @@
     #${BTN_ID} {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      background: #7c3aed;
+      gap: 8px;
+      background: #C2761F;
       color: #ffffff;
-      border: none;
+      border: 1px solid #0F4D49;
       border-radius: 18px;
       padding: 0 14px;
       height: 36px;
@@ -17,18 +17,22 @@
       font-weight: 500;
       cursor: pointer;
       margin-left: 8px;
-      transition: background 0.15s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      transition: background 0.15s ease, box-shadow 0.15s ease;
       white-space: nowrap;
     }
-    #${BTN_ID}:hover { background: #6d28d9; }
-    #${BTN_ID}:active { background: #5b21b6; }
+    #${BTN_ID}:hover { background: #D88A2E; }
+    #${BTN_ID}:active { background: #A05F14; }
     #${BTN_ID}[disabled] { opacity: 0.7; cursor: default; }
-    #${BTN_ID} svg { width: 16px; height: 16px; fill: currentColor; }
+    #${BTN_ID} svg { width: 20px; height: 20px; display: block; }
   `;
 
   const ICON_SVG = `
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M16 1H4a2 2 0 0 0-2 2v14h2V3h12V1zm3 4H8a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm0 16H8V7h11v14z"/>
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <g stroke="#ffffff" stroke-width="7" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M 19 57 L 19 21 A 8 8 0 0 1 27 13 L 56 13"/>
+        <rect x="31" y="22" width="50" height="70" rx="8"/>
+      </g>
     </svg>
   `;
 
