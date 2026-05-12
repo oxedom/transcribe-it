@@ -2,6 +2,14 @@
   <img src="banner.svg" alt="transcribed" height="120" />
 </p>
 
+<p align="center">
+  <img src="store-assets/screenshots/03-popup.png" alt="transcribed settings popup" width="600" />
+</p>
+
+<p align="center">
+  <img src="store-assets/screenshots/02-copied.png" alt="transcribed copy confirmation" width="600" />
+</p>
+
 A tiny Chrome extension that adds a one-click **Copy transcript** button to every YouTube video — full transcript with timestamps to your clipboard.
 
 <p align="center">
