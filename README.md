@@ -13,6 +13,12 @@
 A tiny Chrome extension that adds a one-click **Copy transcript** button to every YouTube video and Spotify podcast episode — full transcript with timestamps to your clipboard.
 
 <p align="center">
+  <a href="https://chromewebstore.google.com/detail/transcribed/bcmnckabbmlnklolblobnobnlioneebd">
+    <img alt="Chrome Web Store" src="https://img.shields.io/chrome-web-store/v/bcmnckabbmlnklolblobnobnlioneebd?label=Chrome%20Web%20Store&color=4DB6AC" />
+  </a>
+</p>
+
+<p align="center">
   Made with ❤️ by <a href="https://brinked.ai">brinked.ai</a>
 </p>
 
@@ -58,7 +64,13 @@ Under the hood the extension is split into a shared `core.js` (button, clipboard
 
 ## Install 🚀
 
-transcribed isn't on the Chrome Web Store yet, so you'll load it as an unpacked extension. Takes about a minute.
+**[→ Install from the Chrome Web Store](https://chromewebstore.google.com/detail/transcribed/bcmnckabbmlnklolblobnobnlioneebd)**
+
+Works in any Chromium-based browser (Chrome, Edge, Brave, Arc). Firefox is not currently supported.
+
+### Load unpacked (for development)
+
+If you want to run from source:
 
 ### 1. Get the code
 
@@ -97,8 +109,6 @@ Open or refresh any YouTube watch page (e.g. `youtube.com/watch?v=...`). The tea
 ### Updating later
 
 When you `git pull` (or download a new ZIP), go back to `chrome://extensions` and click the circular **Reload** icon on the transcribed card. No need to remove and reinstall.
-
-Works in any Chromium-based browser (Chrome, Edge, Brave, Arc). Firefox is not currently supported.
 
 ## Limitations
 
