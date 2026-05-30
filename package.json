@@ -1,6 +1,6 @@
 {
   "name": "transcribed",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "scripts": {
     "build": "tailwindcss -i src/input.css -o popup.css --minify",
