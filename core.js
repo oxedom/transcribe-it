@@ -1,5 +1,19 @@
+// core.js — site-agnostic transcript-copy engine.
+//
+// Owns the button UI, clipboard write, prompt-prepend, settings, and the
+// inject + observe loop. Site-specific DOM logic lives in an "adapter" that
+// each per-site script (youtube.js, spotify.js) passes to Core.init().
+//
+// Adapter interface:
+//   isTargetPage(): boolean                       — on a transcribable page?
+//   getInjectTarget(): Element | null             — node to append the button to
+//   ensureTranscriptOpen(): Promise<truthy|null>  — open panel/tab; null = unavailable
+//   readSegments(): Promise<{ts, text}[]>         — ordered raw segments
+//   observeNavigation?(cb): void                  — optional SPA-nav hook
+
 (() => {
   const BTN_ID = "yt-transcribe-copy-btn";
+  const STYLE_ID = "yt-transcribe-style";
   const { DEFAULT_SETTINGS, SETTINGS_KEY, CHAT_TARGETS } = globalThis.TranscribedDefaults;
 
   const STYLE = `
@@ -47,9 +61,9 @@
   `;
 
   function injectStyle() {
-    if (document.getElementById("yt-transcribe-style")) return;
+    if (document.getElementById(STYLE_ID)) return;
     const s = document.createElement("style");
-    s.id = "yt-transcribe-style";
+    s.id = STYLE_ID;
     s.textContent = STYLE;
     document.head.appendChild(s);
   }
@@ -68,65 +82,6 @@
     return null;
   }
 
-  const PANEL_SELECTOR =
-    'ytd-engagement-panel-section-list-renderer[target-id="PAmodern_transcript_view"], ' +
-    'ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-searchable-transcript"]';
-
-  function getTranscriptPanel() {
-    const panels = document.querySelectorAll(PANEL_SELECTOR);
-    const expanded = Array.from(panels).find(
-      p => p.getAttribute("visibility") === "ENGAGEMENT_PANEL_VISIBILITY_EXPANDED"
-    );
-    return expanded || panels[0] || null;
-  }
-
-  function getSegments() {
-    return document.querySelectorAll(
-      "transcript-segment-view-model, ytd-transcript-segment-renderer"
-    );
-  }
-
-  async function ensureTranscriptOpen() {
-    let panel = getTranscriptPanel();
-    if (panel && panel.getAttribute("visibility") === "ENGAGEMENT_PANEL_VISIBILITY_EXPANDED") {
-      return panel;
-    }
-
-    const descBtn = document.querySelector(
-      "ytd-video-description-transcript-section-renderer button"
-    );
-    if (descBtn) {
-      descBtn.click();
-    } else {
-      const expand = document.querySelector("tp-yt-paper-button#expand");
-      if (expand) {
-        expand.click();
-        await sleep(400);
-        const retry = document.querySelector(
-          "ytd-video-description-transcript-section-renderer button"
-        );
-        if (retry) retry.click();
-      }
-    }
-
-    panel = await waitFor(() => {
-      const p = getTranscriptPanel();
-      return p && p.getAttribute("visibility") === "ENGAGEMENT_PANEL_VISIBILITY_EXPANDED" ? p : null;
-    });
-    return panel;
-  }
-
-  function readSegment(seg) {
-    if (seg.tagName === "TRANSCRIPT-SEGMENT-VIEW-MODEL") {
-      const ts = seg.querySelector(".ytwTranscriptSegmentViewModelTimestamp")?.textContent?.trim() || "";
-      const text = seg.querySelector('span[role="text"]')?.textContent?.trim() || "";
-      return { ts, text };
-    }
-    const ts = seg.querySelector(".segment-timestamp")?.textContent?.trim() || "";
-    const text = seg.querySelector(".segment-text")?.textContent?.trim() || "";
-    return { ts, text };
-  }
-
   function formatTranscript(items) {
     return items
       .map(({ ts, text }) => (ts ? `[${ts}] ${text}` : text))
@@ -142,7 +97,7 @@
     }
   }
 
-  async function copyTranscript(btn) {
+  async function copyTranscript(adapter, btn) {
     const original = btn.innerHTML;
     const setLabel = (html) => { btn.innerHTML = html; };
     btn.disabled = true;
@@ -151,16 +106,13 @@
     try {
       const settings = await loadSettings();
 
-      const panel = await ensureTranscriptOpen();
-      if (!panel) throw new Error("No transcript available");
+      const opened = await adapter.ensureTranscriptOpen();
+      if (!opened) throw new Error("No transcript available");
 
-      const segs = await waitFor(() => {
-        const s = getSegments();
-        return s.length ? s : null;
-      }, { timeout: 10000 });
-      if (!segs) throw new Error("No transcript available");
+      const raw = await adapter.readSegments();
+      if (!raw.length) throw new Error("No transcript available");
 
-      const items = Array.from(segs).map(readSegment).filter(s => s.text);
+      const items = raw.filter(s => s.text);
       if (!items.length) throw new Error("Transcript is empty");
 
       const body = formatTranscript(items);
@@ -188,7 +140,7 @@
     }
   }
 
-  function buildButton() {
+  function buildButton(adapter) {
     const btn = document.createElement("button");
     btn.id = BTN_ID;
     btn.type = "button";
@@ -197,36 +149,34 @@
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      copyTranscript(btn);
+      copyTranscript(adapter, btn);
     });
     return btn;
   }
 
-  function insertButton() {
+  function insertButton(adapter) {
     if (document.getElementById(BTN_ID)) return true;
-    const target =
-      document.querySelector("ytd-watch-metadata #top-level-buttons-computed") ||
-      document.querySelector("#actions #top-level-buttons-computed") ||
-      document.querySelector("ytd-watch-metadata #actions");
+    const target = adapter.getInjectTarget();
     if (!target) return false;
-    target.appendChild(buildButton());
+    target.appendChild(buildButton(adapter));
     return true;
   }
 
-  function isWatchPage() {
-    return location.pathname === "/watch";
+  function init(adapter) {
+    function tick() {
+      if (!adapter.isTargetPage()) return;
+      injectStyle();
+      insertButton(adapter);
+    }
+
+    tick();
+    const obs = new MutationObserver(() => tick());
+    obs.observe(document.documentElement, { childList: true, subtree: true });
+    if (adapter.observeNavigation) {
+      adapter.observeNavigation(() => setTimeout(tick, 300));
+    }
   }
 
-  function tick() {
-    if (!isWatchPage()) return;
-    injectStyle();
-    insertButton();
-  }
-
-  tick();
-  const obs = new MutationObserver(() => tick());
-  obs.observe(document.documentElement, { childList: true, subtree: true });
-  document.addEventListener("yt-navigate-finish", () => {
-    setTimeout(tick, 300);
-  });
+  // Shared helpers adapters may reuse (e.g. waiting for lazy DOM).
+  globalThis.TranscribedCore = { init, waitFor, sleep };
 })();

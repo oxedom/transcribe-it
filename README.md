@@ -10,7 +10,7 @@
   <img src="store-assets/screenshots/02-copied.png" alt="transcribed copy confirmation" width="600" />
 </p>
 
-A tiny Chrome extension that adds a one-click **Copy transcript** button to every YouTube video — full transcript with timestamps to your clipboard.
+A tiny Chrome extension that adds a one-click **Copy transcript** button to every YouTube video and Spotify podcast episode — full transcript with timestamps to your clipboard.
 
 <p align="center">
   Made with ❤️ by <a href="https://brinked.ai">brinked.ai</a>
@@ -49,6 +49,12 @@ It's pure client-side DOM automation — no servers, no API keys, no tracking.
 5. The button briefly flips to `Copied N lines` so you know it worked.
 
 It also listens for YouTube's `yt-navigate-finish` SPA event so the button reappears when you switch videos without a full reload.
+
+### Spotify podcasts 🎧
+
+The same button works on Spotify episode pages (`open.spotify.com/episode/…`). Spotify only exposes transcripts when you're **logged in**, so the button appears only when a transcript is available. On click it opens the episode's **Transcript** tab, reads the timestamped segments, and copies them as the same `[mm:ss] text` lines.
+
+Under the hood the extension is split into a shared `core.js` (button, clipboard, settings) plus a thin per-site adapter — `youtube.js` and `spotify.js` — each anchored on stable `data-testid` attributes rather than Spotify's hashed CSS classes.
 
 ## Install 🚀
 
