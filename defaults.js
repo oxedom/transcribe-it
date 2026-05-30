@@ -36,7 +36,7 @@ const DEFAULT_SETTINGS = {
   prependPrompt: true,
   promptText: DEFAULT_PROMPT,
   openChatAfterCopy: false,
-  chatTarget: "chatgpt",
+  chatTarget: "claude",
 };
 
 const SETTINGS_KEY = "transcribedSettings";

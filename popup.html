@@ -38,28 +38,9 @@
         </div>
       </section>
 
-      <section class="space-y-2">
-        <div class="flex items-center justify-between">
-          <label for="prompt-text" class="text-sm font-medium">Prompt</label>
-          <button
-            id="reset-btn"
-            type="button"
-            class="text-xs text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
-          >
-            Reset to default
-          </button>
-        </div>
-        <textarea
-          id="prompt-text"
-          rows="7"
-          class="w-full rounded-md border border-input bg-card text-card-foreground p-2 text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-ring resize-y"
-          spellcheck="false"
-        ></textarea>
-      </section>
-
       <section class="space-y-3">
         <div class="flex items-start justify-between gap-3">
-          <label for="toggle-open-chat" class="text-sm font-medium">Open AI chat after copy</label>
+          <label for="toggle-open-chat" class="text-sm font-medium">Open new AI Chat Window</label>
           <button
             id="toggle-open-chat"
             type="button"
@@ -77,9 +58,28 @@
           class="w-full rounded-md border border-input bg-card text-card-foreground p-2 text-xs focus:outline-none focus:ring-2 focus:ring-ring"
         >
           <option value="chatgpt">ChatGPT</option>
-          <option value="claude">Claude</option>
+          <option value="claude" selected>Claude</option>
           <option value="gemini">Gemini</option>
         </select>
+      </section>
+
+      <section id="prompt-section" class="space-y-2">
+        <div class="flex items-center justify-between">
+          <label for="prompt-text" class="text-sm font-medium">Prompt</label>
+          <button
+            id="reset-btn"
+            type="button"
+            class="text-xs text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
+          >
+            Reset to default
+          </button>
+        </div>
+        <textarea
+          id="prompt-text"
+          rows="7"
+          class="w-full rounded-md border border-input bg-card text-card-foreground p-2 text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-ring resize-y"
+          spellcheck="false"
+        ></textarea>
       </section>
 
       <button

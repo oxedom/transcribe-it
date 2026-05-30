@@ -5,6 +5,7 @@
 
   const els = {
     togglePrepend: document.getElementById("toggle-prepend"),
+    promptSection: document.getElementById("prompt-section"),
     promptText: document.getElementById("prompt-text"),
     resetBtn: document.getElementById("reset-btn"),
     resetDialog: document.getElementById("reset-dialog"),
@@ -34,12 +35,17 @@
     els.chatTarget.hidden = !readSwitch(els.toggleOpenChat);
   }
 
+  function syncPromptVisibility() {
+    els.promptSection.hidden = !readSwitch(els.togglePrepend);
+  }
+
   function render(settings) {
     setSwitch(els.togglePrepend, settings.prependPrompt);
     els.promptText.value = settings.promptText;
     setSwitch(els.toggleOpenChat, settings.openChatAfterCopy);
     els.chatTarget.value = settings.chatTarget;
     syncChatTargetVisibility();
+    syncPromptVisibility();
   }
 
   function currentSettings() {
@@ -92,6 +98,7 @@
 
     els.togglePrepend.addEventListener("click", () => {
       setSwitch(els.togglePrepend, !readSwitch(els.togglePrepend));
+      syncPromptVisibility();
       refreshSaveButton();
     });
 
